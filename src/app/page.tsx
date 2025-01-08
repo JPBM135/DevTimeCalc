@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AddItemForm } from './components/AddItemForm';
+import { Banner } from './components/Banner';
 import { ExportMarkdown } from './components/ExportMarkdown';
 import { Footer } from './components/Footer';
 import { ListItem } from './components/ListItem';
@@ -105,7 +106,8 @@ export default function TodoList() {
 
   return (
     <div className="container mx-auto flex flex-col gap-4 p-4">
-      <h1 className="mb-4 text-2xl font-bold">Dev Hour Calculator</h1>
+      <h1 className="mb-4 text-2xl font-bold">Freelance Hour Calc</h1>
+      <Banner description="Add items and adjust the hours to calculate your total freelance cost!" />
       <AddItemForm onAdd={(text: string, description: string) => addItem(text, description)} />
       {Object.values(items).map((item) => (
         <ListItem
