@@ -1,101 +1,113 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import { AddItemForm } from './components/AddItemForm';
+import { Footer } from './components/Footer';
+import { ListItem } from './components/ListItem';
+
+export type TodoItem = {
+  checked: boolean;
+  children: TodoItem[];
+  description?: string;
+  hours: number;
+  id: string;
+  text: string;
+};
+
+export default function TodoList() {
+  const [items, setItems] = useState<TodoItem[]>([]);
+
+  useEffect(() => {
+    const storedItems = localStorage.getItem('devHoursCalc.items');
+    if (storedItems) {
+      setItems(JSON.parse(storedItems));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('devHoursCalc.items', JSON.stringify(items));
+  }, [items]);
+
+  const addItem = (text: string, description: string | null, parentId: string | null = null) => {
+    console.log('Adding item', text, description, parentId);
+    const newItem: TodoItem = {
+      id: Math.random().toString(36).slice(2, 11),
+      text,
+      description: description ?? undefined,
+      checked: false,
+      hours: 0,
+      children: []
+    };
+
+    if (parentId === null) {
+      setItems([...items, newItem]);
+    } else {
+      const updateItems = (items: TodoItem[]): TodoItem[] =>
+        items.map((item) => {
+          if (item.id === parentId) {
+            return { ...item, children: [...item.children, newItem] };
+          } else if (item.children.length > 0) {
+            return { ...item, children: updateItems(item.children) };
+          }
+
+          return item;
+        });
+      setItems(updateItems(items));
+    }
+  };
+
+  const updateItem = (id: string, updates: Partial<TodoItem>) => {
+    const updateItems = (items: TodoItem[]): TodoItem[] =>
+      items.map((item) => {
+        if (item.id === id) {
+          return { ...item, ...updates };
+        } else if (item.children.length > 0) {
+          return { ...item, children: updateItems(item.children) };
+        }
+
+        return item;
+      });
+    setItems(updateItems(items));
+  };
+
+  const removeItem = (id: string) => {
+    const removeItems = (items: TodoItem[]): TodoItem[] =>
+      items.reduce<TodoItem[]>((acc, item) => {
+        if (item.id === id) {
+          return acc;
+        } else if (item.children.length > 0) {
+          return [...acc, { ...item, children: removeItems(item.children) }];
+        }
+
+        return [...acc, item];
+      }, []);
+
+    setItems(removeItems(items));
+  };
+
+  const calculateTotalHours = (items: TodoItem[]): number =>
+    items.reduce((total, item) => {
+      const childrenHours = calculateTotalHours(item.children);
+      return total + item.hours + childrenHours;
+    }, 0);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          alt="Next.js logo"
-          className="dark:invert"
-          height={38}
-          priority
-          src="/next.svg"
-          width={180}
+    <div className="container mx-auto flex flex-col gap-4 p-4">
+      <h1 className="mb-4 text-2xl font-bold">Dev Hour Calculator</h1>
+      <AddItemForm onAdd={(text: string, description: string) => addItem(text, description)} />
+      {items.map((item) => (
+        <ListItem
+          addItem={addItem}
+          item={item}
+          key={item.id}
+          removeItem={removeItem}
+          updateItem={updateItem}
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <Image
-              alt="Vercel logomark"
-              className="dark:invert"
-              height={20}
-              src="/vercel.svg"
-              width={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="File icon"
-            aria-hidden
-            height={16}
-            src="/file.svg"
-            width={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="Window icon"
-            aria-hidden
-            height={16}
-            src="/window.svg"
-            width={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <Image
-            alt="Globe icon"
-            aria-hidden
-            height={16}
-            src="/globe.svg"
-            width={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))}
+      <div className="flex flex-col gap-2">
+        {!items.length && <div className="mt-4 text-center text-gray-500">No items added yet.</div>}
+      </div>
+      <Footer totalHours={calculateTotalHours(items)} />
     </div>
   );
 }
