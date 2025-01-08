@@ -1,5 +1,6 @@
 'use client';
 
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { AddItemForm } from './components/AddItemForm';
 import { Banner } from './components/Banner';
@@ -105,26 +106,40 @@ export default function TodoList() {
     }, 0);
 
   return (
-    <div className="container mx-auto flex flex-col gap-4 p-4">
-      <h1 className="mb-4 text-2xl font-bold">Freelance Hour Calc</h1>
-      <Banner description="Add items and adjust the hours to calculate your total freelance cost!" />
-      <AddItemForm onAdd={(text: string, description: string) => addItem(text, description)} />
-      {Object.values(items).map((item) => (
-        <ListItem
-          addItem={addItem}
-          item={item}
-          key={item.id}
-          removeItem={removeItem}
-          updateItem={updateItem}
-        />
-      ))}
-      <div className="flex flex-col gap-2">
-        {!Object.keys(items).length && (
-          <div className="mt-4 text-center text-gray-500">No items added yet.</div>
-        )}
+    <>
+      <Head>
+        <title>Freelance Hour Calculator</title>
+        <meta content="Calculate your dev hours for freelance projects." name="description" />
+        <meta content="Freelance Hour Calculator" property="og:title" />
+        <meta content="Calculate your dev hours for freelance projects." property="og:description" />
+        <meta content="https://dev-hours.jpbm.dev" property="og:url" />
+        <meta content="website" property="og:type" />
+        <meta content="summary_large_image" name="twitter:card" />
+        <meta content="@borges135_" name="twitter:site" />
+        <meta content="Freelance Hour Calculator" name="twitter:title" />
+        <meta content="Calculate your dev hours for freelance projects." name="twitter:description" />
+      </Head>
+      <div className="container mx-auto flex flex-col gap-4 p-4">
+        <h1 className="mb-4 text-2xl font-bold">Freelance Hour Calculator</h1>
+        <Banner description="Add items and adjust the hours to calculate your total freelance cost!" />
+        <AddItemForm onAdd={(text: string, description: string) => addItem(text, description)} />
+        {Object.values(items).map((item) => (
+          <ListItem
+            addItem={addItem}
+            item={item}
+            key={item.id}
+            removeItem={removeItem}
+            updateItem={updateItem}
+          />
+        ))}
+        <div className="flex flex-col gap-2">
+          {!Object.keys(items).length && (
+            <div className="mt-4 text-center text-gray-500">No items added yet.</div>
+          )}
+        </div>
+        <Footer totalHours={calculateTotalHours(items)} />
+        <ExportMarkdown items={items} />
       </div>
-      <Footer totalHours={calculateTotalHours(items)} />
-      <ExportMarkdown items={items} />
-    </div>
+    </>
   );
 }

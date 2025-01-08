@@ -12,9 +12,22 @@ const geistMono = Geist_Mono({
   subsets: ['latin']
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = {
-  title: 'Dev Hour Calculator',
-  description: 'Calculate your dev hours for freelance projects.'
+  title: 'Freelance Hour Calculator',
+  description: 'Calculate your dev hours for freelance projects.',
+  openGraph: {
+    title: 'Freelance Hour Calculator',
+    description: 'Calculate your dev hours for freelance projects.',
+    url: 'https://dev-hours.jpbm.dev',
+    type: 'website',
+    images: []
+  },
+  twitter: {
+    site: '@borges135_',
+    title: 'Dev Hour Calculator',
+    description: 'Calculate your dev hours for freelance projects.'
+  }
 };
 
 export default function RootLayout({
