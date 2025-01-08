@@ -25,7 +25,10 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
   };
 
   const calculateSubtotalHours = (item: TodoItem): number => {
-    const childrenHours = item.children.reduce((total, child) => total + calculateSubtotalHours(child), 0);
+    const childrenHours = Object.values(item.children).reduce(
+      (total, child) => total + calculateSubtotalHours(child),
+      0
+    );
     return item.hours + childrenHours;
   };
 
@@ -38,7 +41,7 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
             <span className={item.checked ? 'line-through' : ''}>{item.text}</span>
             <span className="ml-2 text-gray-500">{item.description}</span>
           </div>
-          {item.children.length > 0 && (
+          {Object.values(item.children).length > 0 && (
             <div className="w-full text-sm text-gray-500">Subtotal: {calculateSubtotalHours(item)} hours</div>
           )}
         </div>
@@ -77,9 +80,11 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
           <Button className="h-8" onClick={() => setShowAddForm(!showAddForm)} size="icon" variant="outline">
             {showAddForm ? <X /> : <StackPlus />}
           </Button>
-          <Button className="h-8" onClick={() => removeItem(item.id)} size="icon" variant="destructive">
-            <Trash />
-          </Button>
+          {!showAddForm && (
+            <Button className="h-8" onClick={() => removeItem(item.id)} size="icon" variant="destructive">
+              <Trash />
+            </Button>
+          )}
         </div>
       </div>
       {showAddForm && (
@@ -91,7 +96,7 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
         />
       )}
       <div className="ml-4 flex flex-col gap-2">
-        {item.children.map((child) => (
+        {Object.values(item.children).map((child) => (
           <ListItem
             addItem={addItem}
             item={child}

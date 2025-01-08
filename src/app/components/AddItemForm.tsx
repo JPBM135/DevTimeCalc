@@ -21,25 +21,25 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
   };
 
   return (
-    <form className="mt-2 flex w-full items-center space-x-2" onSubmit={handleSubmit}>
-      <div className="flex flex-grow flex-col gap-3">
+    <form className="mt-2 flex w-full flex-col gap-2" onSubmit={handleSubmit}>
+      <div className="flex gap-2">
         <Input
-          className="flex-grow"
+          className=""
           onChange={(elm) => setText(elm.target.value)}
           placeholder="Title"
           type="text"
           value={text}
         />
-        <Textarea
-          className="h-20 max-h-40 flex-grow"
-          onChange={(elm) => setDescription(elm.target.value)}
-          placeholder="Description"
-          value={description}
-        />
+        <Button disabled={!text.trim()} type="submit">
+          Add
+        </Button>
       </div>
-      <Button disabled={!text.trim()} type="submit">
-        Add
-      </Button>
+      <Textarea
+        className="h-20 max-h-40"
+        onChange={(elm) => setDescription(elm.target.value)}
+        placeholder="Description"
+        value={description}
+      />
     </form>
   );
 }

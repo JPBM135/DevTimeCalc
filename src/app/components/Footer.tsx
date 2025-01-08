@@ -10,6 +10,18 @@ type FooterProps = {
 
 export function Footer({ totalHours }: FooterProps) {
   const [costPerHour, setCostPerHour] = useState<number>(0);
+
+  useEffect(() => {
+    const savedCostPerHour = localStorage.getItem('devHoursCalc.costPerHour');
+    if (savedCostPerHour) {
+      setCostPerHour(Number.parseFloat(savedCostPerHour) || 0);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('devHoursCalc.costPerHour', costPerHour.toString());
+  }, [costPerHour]);
+
   const [totalCost, setTotalCost] = useState<number>(0);
 
   useEffect(() => {
