@@ -29,7 +29,7 @@ export function Footer({ totalHours }: FooterProps) {
   }, [totalHours, costPerHour]);
 
   return (
-    <div className="flex items-center space-x-4 rounded-lg bg-gray-900 p-4">
+    <div className="flex flex-col items-center space-x-4 rounded-lg bg-gray-900 p-4 sm:flex-row">
       <div className="font-bold">Total Hours: {totalHours}</div>
       <X />
       <label className="font-semibold" htmlFor="costPerHour">

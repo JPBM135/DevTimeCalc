@@ -34,7 +34,7 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
 
   return (
     <>
-      <div className="flex items-start space-x-2">
+      <div className="flex flex-col items-start space-x-2 sm:flex-row">
         <Checkbox checked={item.checked} className="mt-1" onCheckedChange={handleCheckboxChange} />
         <div className="flex w-full flex-col gap-0.5">
           <div className="flex w-full items-center">
@@ -46,7 +46,7 @@ export function ListItem({ item, updateItem, addItem, removeItem }: ListItemProp
           )}
         </div>
 
-        <div className="flex w-full items-end justify-end gap-3">
+        <div className="mt-2 flex w-full items-end justify-end gap-3 sm:mt-0 sm:w-auto">
           {!showAddForm && (
             <div className="ml-2 flex items-center gap-1.5">
               <Button
